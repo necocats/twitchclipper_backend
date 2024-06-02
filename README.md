@@ -1,5 +1,5 @@
 ## package install
-npm install
+```npm install```
 
 ## 実行
-npx ts-node src/index.ts
+```npx ts-node src/index.ts```
