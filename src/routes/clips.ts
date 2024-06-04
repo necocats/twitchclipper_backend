@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express'
-import { serverTimestamp, doc, setDoc, getDoc } from 'firebase/firestore';
+import { serverTimestamp, doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import db from '../firestore'
 
 const router = Router();
@@ -31,10 +31,10 @@ router.post('/', async (req: Request, res: Response) => {
 
         // クリップ情報整理
         const clip = {
-            userId,
+            user_id: userId,
             title: clipData.title,
-            clipId,
-            clipUrl,
+            clip_id: clipId,
+            clip_url: clipUrl,
             thumbnail_url: clipData.thumbnail_url,
             broadcaster_name: clipData.broadcaster_name,
             created_at: serverTimestamp(),
@@ -77,5 +77,39 @@ router.get('/:clipId', async (req: Request, res: Response) => {
         return res.status(500).json({error: 'Failed to get clip.'});
     }
 });
+
+router.get('/', async (req: Request, res: Response) => {
+    /* 特定プレイリストのクリップ全部取得
+        パラメータ: playlistId
+    */
+        try {
+            // playlistIdのclipIdを取得するクエリ作成
+            const { playlistId } = req.body;
+            const playlistsRef = collection(db, 'playlistClips');
+            const q_playlist = query(playlistsRef, where('playlist_id', '==', playlistId));
+    
+            // クエリを実行して、clipId一覧取得
+            const clipIds: object[] = [];
+            const qs_playlist = await getDocs(q_playlist);
+            qs_playlist.forEach((doc) => {
+                clipIds.push(doc.data()["clip_id"]);
+            });
+
+            // clipId一覧からclip一覧取得
+            const clipsRef = collection(db, 'clips');
+            const q_clip = query(clipsRef, where('clip_id', 'in', clipIds));
+            const clips: object[] = [];
+            const qs_clip = await getDocs(q_clip);
+            qs_clip.forEach((doc) => {
+                clips.push(doc.data());
+            });
+
+            // レスポンス
+            res.status(200).json(clips);
+        } catch (error){
+            console.log('error: ', error)
+            return res.status(500).json({error: 'Failed to get clips in playlist.'});
+        }
+})
 
 export default router;
