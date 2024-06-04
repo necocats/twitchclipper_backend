@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express'
 import { serverTimestamp, doc, setDoc, getDoc } from 'firebase/firestore';
 import db from '../firestore'
+import * as dotenv from 'dotenv'
+dotenv.config();
 
 const router = Router();
 const axios = require('axios');
@@ -23,8 +25,8 @@ router.post('/', async (req: Request, res: Response) => {
         // console.log("clipRequestUrl: ", clipRequestUrl)
         const response = await axios.get(clipRequestUrl, {headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer mwu60w5g16rbqcf9lyovu29a9swwx4',
-            'Client-ID': 'bawuvr2cu7oz49616wfogtharu2u9w'
+            'Authorization': process.env.TWITCH_AUTHORIZATION_TOKEN,
+            'Client-ID': process.env.TWITCH_CLIENT_ID
         }})
         const clipData = response.data.data[0]
         // console.log("clipData: ", clipData);
