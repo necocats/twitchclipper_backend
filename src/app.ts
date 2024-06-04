@@ -14,6 +14,6 @@ app.use(express.urlencoded({
 app.use('/api/users', userRoutes);
 app.use('/api/playlists', playlistRoutes);
 app.use('/api/clips', clipRoutes);
-app.use('/api/playlistClips', playlistClipRoutes);
+app.use('/api/playlistclips', playlistClipRoutes);
 
 export default app;
