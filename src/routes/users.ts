@@ -1,7 +1,8 @@
 import { Router, Request, Response } from 'express'
-import { collection, doc, setDoc } from 'firebase/firestore';
-import db from '../firestore'
-import { getDoc } from 'firebase/firestore/lite';
+import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
+import {v4 as uuidv4} from 'uuid';
+import db from '../firestore';
+
 
 const router = Router();
 
@@ -13,17 +14,21 @@ router.post('/register', async (req: Request, res: Response) => {
 
   if (!username || !email || !password) {
     return res.status(400).send('Missing fields');
-  }
+  }//ユーザー情報の不足
 
   try {
-    const userCollection = collection(db, 'users');
-    const userRef = doc(userCollection);
-    await setDoc(userRef, {
-      username,
-      email,
-      password 
-    });
-    res.status(201).send({ id: userRef.id });
+    const { username, email, password } = req.body;
+    const id = uuidv4();
+    const user = {
+      id,
+      user_name: username,
+      email: email,
+      password: password
+    }
+
+    //firestoreに格納
+    await setDoc(doc(db, 'users', id), user)
+    return res.status(201).json(user);
   } catch (error) {
     console.log('error: ', error)
     return res.status(500).json({error: 'Failed to make user.'});
@@ -31,19 +36,29 @@ router.post('/register', async (req: Request, res: Response) => {
 });
 
 router.get('/:userId', async (req: Request, res: Response) => {
+  /* ユーザー情報取得
+  　パラメータ: userId
+  */
   const { userId } = req.params;
 
   try {
     const userDocRef = doc(db, 'users', userId);
     const docSnap = await getDoc(userDocRef);
-    if (!docSnap.exists()) {
-      return res.status(404).send('User not found');
+
+    //ユーザーが存在すれば成功
+    if (docSnap.exists()) {
+      const user = docSnap.data();
+      console.log('Docment data: ', user);
+      res.status(200).json(user);
+    }else{
+      console.log('No such document.');
+      res.status(401).json({error: 'That user does not exist.'});
     }
-    res.status(200).send(docSnap.data());
+    
   } catch (error){
     console.log('error: ', error)
     return res.status(500).json({error: 'Failed to get user.'});
-}
+  }
 });
 
 export default router;
