@@ -100,6 +100,12 @@ router.get('/', async (req: Request, res: Response) => {
             // クエリを実行して、clipId一覧取得
             const clipIds: object[] = [];
             const qs_playlist = await getDocs(q_playlist);
+
+            // プレイリストにクリップが登録されていなければ空の配列を返す
+            if (qs_playlist.empty) {
+                return res.status(200).json([]);
+            }
+
             qs_playlist.forEach((doc) => {
                 clipIds.push(doc.data()["clip_id"]);
             });
