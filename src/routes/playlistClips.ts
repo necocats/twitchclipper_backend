@@ -6,8 +6,6 @@ import db from '../firestore';
 const router = Router();
 
 router.post('/', async (req: Request, res: Response) => {
-    // CORSエラーに対応
-    res.set({ 'Access-Control-Allow-Origin': '*' });
     try {
         // プレイリスト情報の整理, idはuuidを使用
         const { playlistId, clipId } = req.body;

@@ -11,8 +11,6 @@ router.post('/', async (req: Request, res: Response) => {
     /* 新しいクリップの追加
         パラメータ：userId, clipUrl
     */
-    // CORSエラーに対応
-    res.set({ 'Access-Control-Allow-Origin': '*' });
     try {
         // userID, clipUrlを受け取っているかどうか
         const { userId, clipUrl } = req.body;
@@ -62,8 +60,6 @@ router.get('/:clipId', async (req: Request, res: Response) => {
     /* 特定のクリップの取得
         パラメータ: clipId
     */
-    // CORSエラーに対応
-    res.set({ 'Access-Control-Allow-Origin': '*' });
     try {
         const { clipId } = req.params;
         console.log(clipId);
@@ -89,8 +85,6 @@ router.get('/', async (req: Request, res: Response) => {
     /* 特定プレイリストのクリップ全部取得
         パラメータ: playlistId
     */
-    // CORSエラーに対応
-    res.set({ 'Access-Control-Allow-Origin': '*' });
         try {
             // playlistIdのclipIdを取得するクエリ作成
             const playlistId = req.query.playlistId;

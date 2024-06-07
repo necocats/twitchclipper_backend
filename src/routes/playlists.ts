@@ -9,8 +9,6 @@ router.post('/', async (req: Request, res: Response) => {
     /* プレイリストの作成
         パラメータ: userId, playlistName, description
     */
-    // CORSエラーに対応
-    res.set({ 'Access-Control-Allow-Origin': '*' });
     try {
         // プレイリスト情報の整理, idはuuidを使用
         const { userId, playlistName, description } = req.body;
@@ -39,8 +37,6 @@ router.get('/:playlistId', async (req: Request, res: Response) => {
     /* 特定のプレイリスト情報取得
         パラメータ: playlistId
     */
-    // CORSエラーに対応
-    res.set({ 'Access-Control-Allow-Origin': '*' });
     try {
         // playlistIdのプレイリストを取得するクエリ作成
         const { playlistId } = req.params;
@@ -67,8 +63,6 @@ router.get('/', async (req: Request, res: Response) => {
     /* 特定のプレイリスト情報取得
         パラメータ: userId
     */
-    // CORSエラーに対応
-    res.set({ 'Access-Control-Allow-Origin': '*' });
     try {
         // userIdのプレイリストを取得するクエリ作成
         const userId = req.query.userId;
