@@ -10,7 +10,6 @@ router.post('/register', async (req: Request, res: Response) => {
   /* ユーザー登録
       パラメータ: username, email, password
   */
-  res.set({ 'Access-Control-Allow-Origin': '*' });
 
   const { username, email, password } = req.body;
 
@@ -41,7 +40,6 @@ router.get('/:userId', async (req: Request, res: Response) => {
   /* ユーザー情報取得
   　パラメータ: userId
   */
-  res.set({ 'Access-Control-Allow-Origin': '*' });
   const { userId } = req.params;
 
   try {
