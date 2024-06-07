@@ -12,6 +12,9 @@ router.post('/', async (req: Request, res: Response) => {
     try {
         // プレイリスト情報の整理, idはuuidを使用
         const { userId, playlistName, description } = req.body;
+        if (!userId || !playlistName) {
+            return res.status(400).json({ error: 'userId or title required.' });
+        }
         const id = uuidv4();
         const playlist = {
             id,
