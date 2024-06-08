@@ -87,33 +87,20 @@ router.get('/', async (req: Request, res: Response) => {
     }
 });
 
-router.delete('/', async(req: Request, res: Response) => {
-    /* 特定にプレイリスト削除
+router.delete('/:playlistId', async (req: Request, res: Response) => {
+    /* プレイリストの削除
         パラメータ: playlistId
     */
-        const {playlistId} = req.body;
-        if(!playlistId){
-            return res.status(500).json({error: 'playlistId is required.'})
-        }
-    
-        try {
-            // 消したいドキュメントの取得
-            const playlistsRef = collection(db, "playlists");
-            const q = query(playlistsRef, where("id", "==", playlistId));
-            // クエリ実行
-            const querySnapshot = await getDocs(q);
-            // 一致するドキュメント削除
-            querySnapshot.forEach(async (document) => {
-                // doc.data() is never undefined for query doc snapshots
-                await deleteDoc(doc(db, "playlists", document.id));
-                console.log('doc.id: ', document.id);
-            });
-    
-            return res.status(201).json({"ok": "delete successful"});
-        } catch (error) {
-            console.log('error: ', error)
-            return res.status(500).json({error: 'Failed to delete the playlist.'});
-        }
+    try {
+        const { playlistId } = req.params;
+        // プレイリストを削除
+        await deleteDoc(doc(db, 'playlists', playlistId));
+        console.log('Document deleted with ID: ', playlistId);
+        return res.status(200).json({message: 'Playlist deleted successfully.'});
+    } catch (error) {
+        console.log('error: ', error);
+        return res.status(500).json({error: 'Failed to delete playlist.'});
+    }
 });
 
 export default router;

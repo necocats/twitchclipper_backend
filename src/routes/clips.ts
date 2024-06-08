@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express'
-import { serverTimestamp, doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { serverTimestamp, doc, setDoc, getDoc, collection, query, where, getDocs, DocumentData, DocumentReference, deleteDoc } from 'firebase/firestore';
 import db from '../firestore'
 import * as dotenv from 'dotenv'
 dotenv.config();
@@ -121,4 +121,22 @@ router.get('/', async (req: Request, res: Response) => {
         }
 })
 
+router.delete('/:clipId', async (req: Request, res: Response) => {
+    /* クリップの削除
+        パラメータ: clipId
+    */
+    try {
+        const { clipId } = req.params;
+        // クリップを削除
+        await deleteDoc(doc(db, 'clips', clipId));
+        console.log('Document deleted with ID: ', clipId);
+        return res.status(200).json({message: 'Clip deleted successfully.'});
+    } catch (error) {
+        console.log('error: ', error);
+        return res.status(500).json({error: 'Failed to delete clip.'});
+    }
+});
+
+
 export default router;
+
