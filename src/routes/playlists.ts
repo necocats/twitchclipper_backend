@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express'
-import { collection, doc, getDoc, serverTimestamp, setDoc, query, where, getDocs } from 'firebase/firestore';
+import { collection, doc, getDoc, serverTimestamp, setDoc, query, where, getDocs, deleteDoc } from 'firebase/firestore';
 import {v4 as uuidv4} from 'uuid';
 import db from '../firestore';
 
@@ -84,6 +84,22 @@ router.get('/', async (req: Request, res: Response) => {
     } catch (error){
         console.log('error: ', error)
         return res.status(500).json({error: 'Failed to get playlists.'});
+    }
+});
+
+router.delete('/:playlistId', async (req: Request, res: Response) => {
+    /* プレイリストの削除
+        パラメータ: playlistId
+    */
+    try {
+        const { playlistId } = req.params;
+        // プレイリストを削除
+        await deleteDoc(doc(db, 'playlists', playlistId));
+        console.log('Document deleted with ID: ', playlistId);
+        return res.status(200).json({message: 'Playlist deleted successfully.'});
+    } catch (error) {
+        console.log('error: ', error);
+        return res.status(500).json({error: 'Failed to delete playlist.'});
     }
 });
 
