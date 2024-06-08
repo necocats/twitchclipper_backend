@@ -18,8 +18,12 @@ router.post('/', async (req: Request, res: Response) => {
             return res.status(400).json({error: 'userId and clipUrl are required.'})
         }
 
+        // クリップURLのパラメータ削除
+        const urlObject = new URL(clipUrl);
+        urlObject.search = '';
+
         // Twitch APIでクリップ情報の取得 (参考：https://dev.twitch.tv/docs/api/reference/#get-clips)
-        const clipId: string = clipUrl.split('/').at(-1);
+        const clipId: string = urlObject.toString().split('/').at(-1) as string;
         // console.log("clipId: ", clipId)
         const clipRequestUrl = 'https://api.twitch.tv/helix/clips?id=' + clipId;
         // console.log("clipRequestUrl: ", clipRequestUrl)
