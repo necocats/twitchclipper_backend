@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express'
-import { collection, doc, getDoc, serverTimestamp, setDoc, query, where, getDocs } from 'firebase/firestore';
+import { collection, doc, getDoc, serverTimestamp, setDoc, query, where, getDocs, deleteDoc } from 'firebase/firestore';
 import {v4 as uuidv4} from 'uuid';
 import db from '../firestore';
 
@@ -85,6 +85,35 @@ router.get('/', async (req: Request, res: Response) => {
         console.log('error: ', error)
         return res.status(500).json({error: 'Failed to get playlists.'});
     }
+});
+
+router.delete('/', async(req: Request, res: Response) => {
+    /* 特定にプレイリスト削除
+        パラメータ: playlistId
+    */
+        const {playlistId} = req.body;
+        if(!playlistId){
+            return res.status(500).json({error: 'playlistId is required.'})
+        }
+    
+        try {
+            // 消したいドキュメントの取得
+            const playlistsRef = collection(db, "playlists");
+            const q = query(playlistsRef, where("id", "==", playlistId));
+            // クエリ実行
+            const querySnapshot = await getDocs(q);
+            // 一致するドキュメント削除
+            querySnapshot.forEach(async (document) => {
+                // doc.data() is never undefined for query doc snapshots
+                await deleteDoc(doc(db, "playlists", document.id));
+                console.log('doc.id: ', document.id);
+            });
+    
+            return res.status(201).json({"ok": "delete successful"});
+        } catch (error) {
+            console.log('error: ', error)
+            return res.status(500).json({error: 'Failed to delete the playlist.'});
+        }
 });
 
 export default router;
