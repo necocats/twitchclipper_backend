@@ -12,7 +12,8 @@ app.use(express.urlencoded({
     extended: true
 }));
 app.use(cors({
-    origin: ['http://127.0.0.1:5173','http://localhost:5173'], //アクセス許可するオリジン
+    origin: ['https://twitchclipper.vercel.app', 'http://127.0.0.1:5173','http://localhost:5173'], //アクセス許可するオリジン
+    // origin: ['http://127.0.0.1:5173','http://localhost:5173'], //アクセス許可するオリジン
     credentials: true, //レスポンスヘッダーにAccess-Control-Allow-Credentials追加
 }))
 
